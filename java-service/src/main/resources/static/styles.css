@@ -1,0 +1,65 @@
+/* Common body style (for main index.html) */
+body {
+  font-family: 'Arial', sans-serif;
+  background: #282c34;
+  color: white;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  flex-direction: column;
+  background-image: url('https://source.unsplash.com/1600x900/?technology,cloud');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+/* Container styling (common for all pages) */
+.container {
+  text-align: center;
+  padding: 30px;
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 15px;
+  max-width: 600px;
+  width: 100%;
+}
+
+/* Header title */
+header h1 {
+  font-size: 36px;
+  color: #f39c12;
+}
+
+/* Service link button */
+.service-link {
+  text-decoration: none;
+  padding: 15px;
+  font-size: 18px;
+  color: white;
+  background-color: #2980b9;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.service-link:hover {
+  background-color: #3498db;
+}
+
+/* Java Service Page Custom Background */
+.java-page {
+  background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  font-family: 'Arial', sans-serif;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}

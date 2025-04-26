@@ -1,0 +1,40 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: multi-service-ingress
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/actions.ssl-redirect: '{"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_301"}}'
+    alb.ingress.kubernetes.io/certificate-arn: your-acm-certificate-arn
+    alb.ingress.kubernetes.io/group.name: multi-service-group
+    alb.ingress.kubernetes.io/healthcheck-path: /api/java/health
+    alb.ingress.kubernetes.io/success-codes: "200,404"
+spec:
+  rules:
+  - host: api.yourdomain.com
+    http:
+      paths:
+      - path: /api/java
+        pathType: Prefix
+        backend:
+          service:
+            name: java-service
+            port:
+              number: 80
+      - path: /api/python
+        pathType: Prefix
+        backend:
+          service:
+            name: python-service
+            port:
+              number: 80
+      - path: /api/go
+        pathType: Prefix
+        backend:
+          service:
+            name: go-service
+            port:
+              number: 80

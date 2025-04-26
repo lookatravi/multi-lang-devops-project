@@ -1,0 +1,173 @@
+# Java Service Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: java-service
+  labels:
+    app: java-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: java-service
+  template:
+    metadata:
+      labels:
+        app: java-service
+    spec:
+      containers:
+      - name: java-service
+        image: lookatravi/java-service:v1
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+        livenessProbe:
+          httpGet:
+            path: /api/java/health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /api/java/health
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10
+---
+# Python Service Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: python-service
+  labels:
+    app: python-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: python-service
+  template:
+    metadata:
+      labels:
+        app: python-service
+    spec:
+      containers:
+      - name: python-service
+        image: lookatravi/python-service:v1
+        ports:
+        - containerPort: 5000
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+        livenessProbe:
+          httpGet:
+            path: /api/python/health
+            port: 5000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /api/python/health
+            port: 5000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+---
+# Go Service Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-service
+  labels:
+    app: go-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: go-service
+  template:
+    metadata:
+      labels:
+        app: go-service
+    spec:
+      containers:
+      - name: go-service
+        image: lookatravi/go-service:v1
+        ports:
+        - containerPort: 5002
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+        livenessProbe:
+          httpGet:
+            path: /api/go/health
+            port: 5002
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /api/go/health
+            port: 5002
+          initialDelaySeconds: 5
+          periodSeconds: 10
+---
+# Java Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: java-service
+  labels:
+    app: java-service
+spec:
+  selector:
+    app: java-service
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: ClusterIP
+---
+# Python Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: python-service
+  labels:
+    app: python-service
+spec:
+  selector:
+    app: python-service
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5000
+  type: ClusterIP
+---
+# Go Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: go-service
+  labels:
+    app: go-service
+spec:
+  selector:
+    app: go-service
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5002
+  type: ClusterIP
