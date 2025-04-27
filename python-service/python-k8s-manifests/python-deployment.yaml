@@ -5,7 +5,7 @@ metadata:
   labels:
     app: python-service
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: python-service
@@ -26,15 +26,15 @@ spec:
           limits:
             cpu: "500m"
             memory: "512Mi"
-        livenessProbe:
-          httpGet:
-            path: /api/python/health
-            port: 5000
-          initialDelaySeconds: 30
-          periodSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /api/python/health
-            port: 5000
-          initialDelaySeconds: 5
-          periodSeconds: 10
+        #livenessProbe:
+        #  httpGet:
+        #    path: /api/python/health
+        #    port: 5000
+        #  initialDelaySeconds: 30
+        #  periodSeconds: 10
+        #readinessProbe:
+        #  httpGet:
+        #    path: /api/python/health
+        #    port: 5000
+        #  initialDelaySeconds: 5
+        #  periodSeconds: 10
