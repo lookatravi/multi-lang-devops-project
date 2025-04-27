@@ -59,7 +59,13 @@ jobs:
     - name: Unit Test Python Service
       run: |
         cd python-service
-        pytest
+        pytest test_app.py
+    
+    - name: List files in python-service
+      run: |
+        cd python-service
+        ls -al       
+
 
   build-go-service:
     runs-on: ubuntu-latest
