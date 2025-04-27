@@ -51,6 +51,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt  # Install all dependencies, including pytest
 
+    - name: Check installed Python packages
+      run: |
+          cd python-service
+          pip list  # Ensure pytest is installed
+
     - name: Unit Test Python Service
       run: |
         cd python-service
