@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: python-service
-        image: lookatravi/python-service:v2
+        image: lookatravi/python-service:v8
         ports:
         - containerPort: 5000
         resources:
