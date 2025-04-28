@@ -1,7 +1,7 @@
 version: '3'
 services:
   java-service:
-    image: java-service:latest
+    image: java-service:v8
     build:
       context: ./java-service
     ports:
@@ -10,7 +10,7 @@ services:
       - devops-network
 
   python-service:
-    image: python-service:latest
+    image: python-service:v8.1
     build:
       context: ./python-service
     ports:
@@ -19,7 +19,7 @@ services:
       - devops-network
 
   go-service:
-    image: go-service:latest
+    image: go-service:v8
     build:
       context: ./go-service
     ports:

@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: java-service
-        image: lookatravi/java-service:v6
+        image: lookatravi/java-service:v8
         #command: ["sh", "-c", "java -jar /app/java-service.jar --server.servlet.context-path=/api/java"]
         #command: ["sh", "-c", "java -jar /app/java-service.jar"]
         command: ["java", "-jar", "app.jar"] 
@@ -60,7 +60,7 @@ spec:
     spec:
       containers:
       - name: python-service
-        image: lookatravi/python-service:v2
+        image: lookatravi/python-service:v8.1
         ports:
         - containerPort: 5000
         resources:
@@ -102,7 +102,7 @@ spec:
     spec:
       containers:
       - name: go-service
-        image: lookatravi/go-service:v2
+        image: lookatravi/go-service:v8
         ports:
         - containerPort: 5002
         resources:

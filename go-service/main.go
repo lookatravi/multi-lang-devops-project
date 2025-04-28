@@ -5,15 +5,11 @@ import (
 	"net/http"
 )
 
-const (
-	frontendHomeURL = "http://localhost:8080/"
-	serviceBaseURL  = "http://localhost:5002/api/go"
-)
-
-func htmlTemplate(title, content string, showHealthLink bool) string {
+func htmlTemplate(title, content string, showHealthLink bool, r *http.Request) string {
+	baseURL := getBaseURL(r)
 	healthLink := ""
 	if showHealthLink {
-		healthLink = fmt.Sprintf(`<a href='%s/health' class='service-link'>Health Check</a>`, serviceBaseURL)
+		healthLink = fmt.Sprintf(`<a href='%s/api/go/health' class='service-link'>Health Check</a>`, baseURL)
 	}
 	
 	return fmt.Sprintf(`
@@ -83,7 +79,15 @@ func htmlTemplate(title, content string, showHealthLink bool) string {
 		</div>
 	</body>
 	</html>
-	`, title, content, frontendHomeURL, healthLink)
+	`, title, content, baseURL, healthLink)
+}
+
+func getBaseURL(r *http.Request) string {
+	scheme := "http"
+	if r.TLS != nil {
+		scheme = "https"
+	}
+	return fmt.Sprintf("%s://%s", scheme, r.Host)
 }
 
 func hello(w http.ResponseWriter, r *http.Request) {
@@ -91,6 +95,7 @@ func hello(w http.ResponseWriter, r *http.Request) {
 		"Hello from Go Service! 🚀",
 		"This is the Go backend service running on port 5002",
 		true, // Show Health Check link
+		r,
 	))
 }
 
@@ -99,12 +104,13 @@ func health(w http.ResponseWriter, r *http.Request) {
 		"Go Service Health Check",
 		"✅ Status: <span class='health-status'>OK</span> - Service is running smoothly!",
 		false, // Don't show Health Check link on health page
+		r,
 	))
 }
 
 func main() {
 	http.HandleFunc("/api/go", hello)
 	http.HandleFunc("/api/go/health", health)
-	fmt.Println("Go service running on http://localhost:5002")
+	fmt.Println("Go service running on port 5002")
 	http.ListenAndServe(":5002", nil)
 }

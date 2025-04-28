@@ -151,14 +151,14 @@ jobs:
 
     - name: Update Kubernetes Manifests
       run: |
-        sed -i "s|image: .*|image: lookatravi/java-service:${{ github.run_id }}|" kubernetes/java-service/deploy.yaml
-        sed -i "s|image: .*|image: lookatravi/python-service:${{ github.run_id }}|" kubernetes/python-service/deploy.yaml
-        sed -i "s|image: .*|image: lookatravi/go-service:${{ github.run_id }}|" kubernetes/go-service/deploy.yaml
+        sed -i "s|image: .*|image: lookatravi/java-service:${{ github.run_id }}|"   java-service/deploy.yaml
+        sed -i "s|image: .*|image: lookatravi/python-service:${{ github.run_id }}|" python-service/deploy.yaml
+        sed -i "s|image: .*|image: lookatravi/go-service:${{ github.run_id }}|"     go-service/deploy.yaml
 
     - name: Commit and Push Manifest Changes
       run: |
         git config --global user.email "actions@github.com"
-        git config --global user.name "GitHub Actions"
+        git config --global user.name "GitHub Actions"  
         git add kubernetes/*/deploy.yaml
         git commit -m "CI: Update image tags to ${{ github.run_id }}"
         git push

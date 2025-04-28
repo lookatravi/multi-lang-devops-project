@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: go-service
-        image: lookatravi/go-service:v2
+        image: lookatravi/go-service:v8
         ports:
         - containerPort: 5002
         resources:
