@@ -1,83 +1,31 @@
-from flask import Flask, request
+from flask import Flask, request, redirect
+import os
 
 app = Flask(__name__)
 
-def get_base_url():
-    """Dynamically generates the base URL including correct scheme (http/https)"""
-    return request.url_root.rstrip('/')
+def get_referrer_base():
+    """Extracts the referring service's base URL from the request"""
+    referrer = request.referrer
+    if referrer:
+        # Extract base URL from referrer (e.g., "http://35.88.92.227:8080")
+        return referrer.split('/api/')[0] if '/api/' in referrer else referrer
+    # Fallback to Java service if no referrer (direct access)
+    return f"http://{request.host.split(':')[0]}:8080"
 
 @app.route('/api/python')
 def home():
-    base_url = get_base_url()
+    home_url = get_referrer_base()
+    python_base_url = request.url_root.rstrip('/')
+    
     return f"""
     <!DOCTYPE html>
     <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Python Service</title>
-        <style>
-            body {{
-                background: linear-gradient(to right, #d3cce3, #e9e4f0);
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                height: 100vh;
-                margin: 0;
-                font-family: Arial, sans-serif;
-                flex-direction: column;
-            }}
-            h1 {{
-                font-size: 3em;
-                color: #333;
-                margin-bottom: 20px;
-                text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-            }}
-            .service-link {{
-                font-size: 1.5em;
-                color: #4b6cb7;
-                text-decoration: none;
-                padding: 12px 24px;
-                border: 2px solid #4b6cb7;
-                border-radius: 8px;
-                transition: all 0.3s ease;
-                margin: 10px;
-                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            }}
-            .service-link:hover {{
-                background-color: #4b6cb7;
-                color: white;
-                transform: translateY(-2px);
-                box-shadow: 0 6px 8px rgba(0,0,0,0.15);
-            }}
-            .button-container {{
-                display: flex;
-                gap: 20px;
-                margin-top: 20px;
-            }}
-            .button {{
-                font-size: 1.5em;
-                padding: 12px 24px;
-                border: 2px solid #4b6cb7;
-                background-color: #4b6cb7;
-                color: white;
-                border-radius: 8px;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            }}
-            .button:hover {{
-                background-color: #3a5a9b;
-                transform: translateY(-2px);
-                box-shadow: 0 6px 8px rgba(0,0,0,0.15);
-            }}
-        </style>
-    </head>
+    <!-- [Keep all your existing head content] -->
     <body>
         <h1>🚀 Hello from Python Service! 🚀</h1>
         <div class="button-container">
-            <a href='{base_url}' class='service-link'>Back to Home</a>
-            <button class='button' onclick='window.location.href="{base_url}/api/python/health"'>Check Health</button>
+            <a href='{home_url}' class='service-link'>Back to Home</a>
+            <button class='button' onclick='window.location.href="{python_base_url}/api/python/health"'>Check Health</button>
         </div>
     </body>
     </html>
@@ -85,61 +33,15 @@ def home():
 
 @app.route('/api/python/health')
 def health():
-    base_url = get_base_url()
+    home_url = get_referrer_base()
     return f"""
     <!DOCTYPE html>
     <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Health Check</title>
-        <style>
-            body {{
-                background: linear-gradient(to right, #d3cce3, #e9e4f0);
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                height: 100vh;
-                margin: 0;
-                font-family: Arial, sans-serif;
-                flex-direction: column;
-            }}
-            h1 {{
-                font-size: 3em;
-                color: #333;
-                margin-bottom: 20px;
-            }}
-            .status {{
-                font-size: 1.5em;
-                color: #2e7d32;
-                font-weight: bold;
-                margin-bottom: 30px;
-                padding: 15px 30px;
-                background-color: rgba(46, 125, 50, 0.1);
-                border-radius: 8px;
-            }}
-            .service-link {{
-                font-size: 1.5em;
-                color: #4b6cb7;
-                text-decoration: none;
-                padding: 12px 24px;
-                border: 2px solid #4b6cb7;
-                border-radius: 8px;
-                transition: all 0.3s ease;
-                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            }}
-            .service-link:hover {{
-                background-color: #4b6cb7;
-                color: white;
-                transform: translateY(-2px);
-                box-shadow: 0 6px 8px rgba(0,0,0,0.15);
-            }}
-        </style>
-    </head>
+    <!-- [Keep all your existing head content] -->
     <body>
         <h1>🚀 Service Health Status 🚀</h1>
         <div class="status">✅ All Systems Operational</div>
-        <a href="{base_url}" class="service-link">Back to Home</a>
+        <a href="{home_url}" class="service-link">Back to Home</a>
     </body>
     </html>
     """
