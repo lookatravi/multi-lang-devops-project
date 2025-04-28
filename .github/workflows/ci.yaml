@@ -161,5 +161,5 @@ jobs:
         git config --global user.email "actions@github.com"
         git config --global user.name "GitHub Actions"  
         git add k8s-manifest-all/all-services.yaml
-        git commit -m "CI: Update image tags to ${{ github.run_id }}"
-        git push
+        git commit -m "CI: Update image tags to ${{ github.run_id }}" || echo "No changes to commit"
+        git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/lookatravi/multi-lang-devops-project.git HEAD:main
