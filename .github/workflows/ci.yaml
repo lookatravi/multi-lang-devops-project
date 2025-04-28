@@ -151,9 +151,10 @@ jobs:
 
     - name: Update Kubernetes Manifests
       run: |
-        sed -i "s|image: .*|image: lookatravi/java-service:${{ github.run_id }}|"   java-service/deploy.yaml
-        sed -i "s|image: .*|image: lookatravi/python-service:${{ github.run_id }}|" python-service/deploy.yaml
-        sed -i "s|image: .*|image: lookatravi/go-service:${{ github.run_id }}|"     go-service/deploy.yaml
+        sed -i "/name: java-service/{n;s|image: .*|image: lookatravi/java-service:${{ github.run_id }}|}" k8s-manifest-all/all-services.yaml
+        sed -i "/name: python-service/{n;s|image: .*|image: lookatravi/python-service:${{ github.run_id }}|}" k8s-manifest-all/all-services.yaml
+        sed -i "/name: go-service/{n;s|image: .*|image: lookatravi/go-service:${{ github.run_id }}|}" k8s-manifest-all/all-services.yaml
+      
 
     - name: Commit and Push Manifest Changes
       run: |
