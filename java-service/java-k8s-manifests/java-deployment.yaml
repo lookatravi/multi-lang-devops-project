@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: java-service
-        image: lookatravi/java-service:v6
+        image: lookatravi/java-service:v7
         #command: ["sh", "-c", "java -jar /app/java-service.jar --server.servlet.context-path=/api/java"]
         #command: ["sh", "-c", "java -jar /app/java-service.jar"]
         command: ["java", "-jar", "app.jar"] 
