@@ -2,12 +2,15 @@ package com.devops.demo;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import javax.servlet.http.HttpServletRequest;
 
 @RestController
 public class JavaServiceController {
 
     @GetMapping("/api/java")
-    public String getJavaService() {
+    public String getJavaService(HttpServletRequest request) {
+        String baseUrl = getBaseUrl(request);
+        
         return "<!DOCTYPE html>" +
                 "<html lang='en'>" +
                 "<head>" +
@@ -24,7 +27,7 @@ public class JavaServiceController {
                 "    </header>" +
                 "    <section>" +
                 "      <div class='links'>" +
-                "        <a href='/' class='service-link'>Back to Home</a>" +
+                "        <a href='" + baseUrl + "/' class='service-link'>Back to Home</a>" +
                 "      </div>" +
                 "    </section>" +
                 "    <footer>" +
@@ -33,5 +36,10 @@ public class JavaServiceController {
                 "  </div>" +
                 "</body>" +
                 "</html>";
+    }
+
+    private String getBaseUrl(HttpServletRequest request) {
+        return request.getScheme() + "://" + request.getServerName() + 
+               (request.getServerPort() != 80 ? ":" + request.getServerPort() : "");
     }
 }
