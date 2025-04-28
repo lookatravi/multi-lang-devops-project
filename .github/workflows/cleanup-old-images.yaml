@@ -1,0 +1,34 @@
+name: Cleanup Old Docker Images
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'   # Every Sunday at midnight (you can change timing)
+  workflow_dispatch:      # Allow manual trigger as well
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Delete old Java Service images
+      uses: actions/delete-package-versions@v4
+      with:
+        package-name: 'java-service'
+        package-type: 'container'
+        min-versions-to-keep: 10
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Delete old Python Service images
+      uses: actions/delete-package-versions@v4
+      with:
+        package-name: 'python-service'
+        package-type: 'container'
+        min-versions-to-keep: 10
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Delete old Go Service images
+      uses: actions/delete-package-versions@v4
+      with:
+        package-name: 'go-service'
+        package-type: 'container'
+        min-versions-to-keep: 10
+        token: ${{ secrets.GITHUB_TOKEN }}
