@@ -128,42 +128,59 @@ jobs:
   trivy-security-scan:
     runs-on: ubuntu-latest
     needs: docker-build-push
+    env:
+      DOCKER_USERNAME: lookatravi
     permissions:
       security-events: write
       contents: read
     steps:
-    - name: Install Trivy
-      uses: aquasecurity/trivy-action@master
-
     - name: Scan Java Image
-      run: |
-        trivy image --severity CRITICAL,HIGH --exit-code 1 --format sarif --output trivy-java.sarif ${{ env.DOCKER_USERNAME }}/java-service:${{ github.run_id }}
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'image'
+        image-ref: '${{ env.DOCKER_USERNAME }}/java-service:${{ github.run_id }}'
+        severity: 'CRITICAL,HIGH'
+        format: 'sarif'
+        output: 'trivy-java.sarif'
+        exit-code: '1'
 
     - name: Upload Java SARIF
       uses: github/codeql-action/upload-sarif@v2
       with:
-        sarif_file: trivy-java.sarif
-        category: java-scan
+        sarif_file: 'trivy-java.sarif'
+        category: 'java-scan'
 
     - name: Scan Python Image
-      run: |
-        trivy image --severity CRITICAL,HIGH --exit-code 1 --format sarif --output trivy-python.sarif ${{ env.DOCKER_USERNAME }}/python-service:${{ github.run_id }}
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'image'
+        image-ref: '${{ env.DOCKER_USERNAME }}/python-service:${{ github.run_id }}'
+        severity: 'CRITICAL,HIGH'
+        format: 'sarif'
+        output: 'trivy-python.sarif'
+        exit-code: '1'
 
     - name: Upload Python SARIF
       uses: github/codeql-action/upload-sarif@v2
       with:
-        sarif_file: trivy-python.sarif
-        category: python-scan
+        sarif_file: 'trivy-python.sarif'
+        category: 'python-scan'
 
     - name: Scan Go Image
-      run: |
-        trivy image --severity CRITICAL,HIGH --exit-code 1 --format sarif --output trivy-go.sarif ${{ env.DOCKER_USERNAME }}/go-service:${{ github.run_id }}
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'image'
+        image-ref: '${{ env.DOCKER_USERNAME }}/go-service:${{ github.run_id }}'
+        severity: 'CRITICAL,HIGH'
+        format: 'sarif'
+        output: 'trivy-go.sarif'
+        exit-code: '1'
 
     - name: Upload Go SARIF
       uses: github/codeql-action/upload-sarif@v2
       with:
-        sarif_file: trivy-go.sarif
-        category: go-scan
+        sarif_file: 'trivy-go.sarif'
+        category: 'go-scan'
 
   update-k8s-manifests:
     runs-on: ubuntu-latest
