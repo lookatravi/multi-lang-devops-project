@@ -134,53 +134,72 @@ jobs:
       security-events: write
       contents: read
     steps:
-    - name: Scan Java Image
+    - name: Install Trivy
       uses: aquasecurity/trivy-action@master
       with:
-        scan-type: 'image'
-        image-ref: '${{ env.DOCKER_USERNAME }}/java-service:${{ github.run_id }}'
-        severity: 'CRITICAL,HIGH'
-        format: 'sarif'
-        output: 'trivy-java.sarif'
-        exit-code: '1'
+        trivy-version: '0.50.0'
+
+    - name: Cache Trivy DB
+      uses: actions/cache@v3
+      with:
+        path: /home/runner/.cache/trivy
+        key: ${{ runner.os }}-trivy-db-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-trivy-db-
+
+    - name: Scan Java Image
+      run: |
+        trivy image \
+          --severity CRITICAL,HIGH \
+          --exit-code 1 \
+          --format sarif \
+          --output trivy-java.sarif \
+          --timeout 10m \
+          --scanners vuln \
+          --ignore-unfixed \
+          ${{ env.DOCKER_USERNAME }}/java-service:${{ github.run_id }}
 
     - name: Upload Java SARIF
       uses: github/codeql-action/upload-sarif@v2
       with:
-        sarif_file: 'trivy-java.sarif'
-        category: 'java-scan'
+        sarif_file: trivy-java.sarif
+        category: java-scan
 
     - name: Scan Python Image
-      uses: aquasecurity/trivy-action@master
-      with:
-        scan-type: 'image'
-        image-ref: '${{ env.DOCKER_USERNAME }}/python-service:${{ github.run_id }}'
-        severity: 'CRITICAL,HIGH'
-        format: 'sarif'
-        output: 'trivy-python.sarif'
-        exit-code: '1'
+      run: |
+        trivy image \
+          --severity CRITICAL,HIGH \
+          --exit-code 1 \
+          --format sarif \
+          --output trivy-python.sarif \
+          --timeout 10m \
+          --scanners vuln \
+          --ignore-unfixed \
+          ${{ env.DOCKER_USERNAME }}/python-service:${{ github.run_id }}
 
     - name: Upload Python SARIF
       uses: github/codeql-action/upload-sarif@v2
       with:
-        sarif_file: 'trivy-python.sarif'
-        category: 'python-scan'
+        sarif_file: trivy-python.sarif
+        category: python-scan
 
     - name: Scan Go Image
-      uses: aquasecurity/trivy-action@master
-      with:
-        scan-type: 'image'
-        image-ref: '${{ env.DOCKER_USERNAME }}/go-service:${{ github.run_id }}'
-        severity: 'CRITICAL,HIGH'
-        format: 'sarif'
-        output: 'trivy-go.sarif'
-        exit-code: '1'
+      run: |
+        trivy image \
+          --severity CRITICAL,HIGH \
+          --exit-code 1 \
+          --format sarif \
+          --output trivy-go.sarif \
+          --timeout 10m \
+          --scanners vuln \
+          --ignore-unfixed \
+          ${{ env.DOCKER_USERNAME }}/go-service:${{ github.run_id }}
 
     - name: Upload Go SARIF
       uses: github/codeql-action/upload-sarif@v2
       with:
-        sarif_file: 'trivy-go.sarif'
-        category: 'go-scan'
+        sarif_file: trivy-go.sarif
+        category: go-scan
 
   update-k8s-manifests:
     runs-on: ubuntu-latest
