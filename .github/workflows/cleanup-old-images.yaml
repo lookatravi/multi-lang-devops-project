@@ -2,33 +2,70 @@ name: Cleanup Old Docker Images
 
 on:
   schedule:
-    - cron: '0 0 * * 0'   # Every Sunday at midnight (you can change timing)
-  workflow_dispatch:      # Allow manual trigger as well
+    - cron: '0 0 * * 0'   # Every Sunday at midnight UTC
+  workflow_dispatch:      # Allow manual trigger
 
 jobs:
   cleanup:
     runs-on: ubuntu-latest
     steps:
-    - name: Delete old Java Service images
-      uses: actions/delete-package-versions@v4
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
       with:
-        package-name: 'java-service'
-        package-type: 'container'
-        min-versions-to-keep: 10
-        token: ${{ secrets.GITHUB_TOKEN }}
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_TOKEN }}
 
-    - name: Delete old Python Service images
-      uses: actions/delete-package-versions@v4
-      with:
-        package-name: 'python-service'
-        package-type: 'container'
-        min-versions-to-keep: 10
-        token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Clean Java Service images
+      run: |
+        # Install required tools
+        sudo apt-get update && sudo apt-get install -y jq curl
 
-    - name: Delete old Go Service images
-      uses: actions/delete-package-versions@v4
-      with:
-        package-name: 'go-service'
-        package-type: 'container'
-        min-versions-to-keep: 10
-        token: ${{ secrets.GITHUB_TOKEN }}
+        # Get all tags for java-service
+        TAGS=$(curl -s "https://hub.docker.com/v2/repositories/${{ secrets.DOCKER_USERNAME }}/java-service/tags/?page_size=100" | jq -r '.results[].name')
+
+        # Keep last 10 tags
+        KEEP_TAGS=$(echo "$TAGS" | head -10)
+        DELETE_TAGS=$(echo "$TAGS" | tail -n +11)
+
+        # Delete old tags
+        for TAG in $DELETE_TAGS; do
+          echo "Deleting ${{ secrets.DOCKER_USERNAME }}/java-service:$TAG"
+          curl -X DELETE \
+            -H "Authorization: Bearer $(curl -s -H "Content-Type: application/json" \
+            -X POST \
+            -d '{"username": "'"${{ secrets.DOCKER_USERNAME }}"'", "password": "'"${{ secrets.DOCKER_TOKEN }}"'"}' \
+            https://hub.docker.com/v2/users/login/ | jq -r .token)" \
+            "https://hub.docker.com/v2/repositories/${{ secrets.DOCKER_USERNAME }}/java-service/tags/$TAG/"
+        done
+
+    - name: Clean Python Service images
+      run: |
+        TAGS=$(curl -s "https://hub.docker.com/v2/repositories/${{ secrets.DOCKER_USERNAME }}/python-service/tags/?page_size=100" | jq -r '.results[].name')
+        KEEP_TAGS=$(echo "$TAGS" | head -10)
+        DELETE_TAGS=$(echo "$TAGS" | tail -n +11)
+
+        for TAG in $DELETE_TAGS; do
+          echo "Deleting ${{ secrets.DOCKER_USERNAME }}/python-service:$TAG"
+          curl -X DELETE \
+            -H "Authorization: Bearer $(curl -s -H "Content-Type: application/json" \
+            -X POST \
+            -d '{"username": "'"${{ secrets.DOCKER_USERNAME }}"'", "password": "'"${{ secrets.DOCKER_TOKEN }}"'"}' \
+            https://hub.docker.com/v2/users/login/ | jq -r .token)" \
+            "https://hub.docker.com/v2/repositories/${{ secrets.DOCKER_USERNAME }}/python-service/tags/$TAG/"
+        done
+
+    - name: Clean Go Service images
+      run: |
+        TAGS=$(curl -s "https://hub.docker.com/v2/repositories/${{ secrets.DOCKER_USERNAME }}/go-service/tags/?page_size=100" | jq -r '.results[].name')
+        KEEP_TAGS=$(echo "$TAGS" | head -10)
+        DELETE_TAGS=$(echo "$TAGS" | tail -n +11)
+
+        for TAG in $DELETE_TAGS; do
+          echo "Deleting ${{ secrets.DOCKER_USERNAME }}/go-service:$TAG"
+          curl -X DELETE \
+            -H "Authorization: Bearer $(curl -s -H "Content-Type: application/json" \
+            -X POST \
+            -d '{"username": "'"${{ secrets.DOCKER_USERNAME }}"'", "password": "'"${{ secrets.DOCKER_TOKEN }}"'"}' \
+            https://hub.docker.com/v2/users/login/ | jq -r .token)" \
+            "https://hub.docker.com/v2/repositories/${{ secrets.DOCKER_USERNAME }}/go-service/tags/$TAG/"
+        done
