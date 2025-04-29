@@ -135,17 +135,12 @@ jobs:
       contents: read
     steps:
     - name: Install Trivy
-      uses: aquasecurity/trivy-action@master
-      with:
-        trivy-version: '0.50.0'
-
-    - name: Cache Trivy DB
-      uses: actions/cache@v3
-      with:
-        path: /home/runner/.cache/trivy
-        key: ${{ runner.os }}-trivy-db-${{ hashFiles('**/requirements.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-trivy-db-
+      run: |
+        sudo apt-get install -y wget apt-transport-https gnupg lsb-release
+        wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+        echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
+        sudo apt-get update
+        sudo apt-get install -y trivy
 
     - name: Scan Java Image
       run: |
@@ -154,9 +149,7 @@ jobs:
           --exit-code 1 \
           --format sarif \
           --output trivy-java.sarif \
-          --timeout 10m \
           --scanners vuln \
-          --ignore-unfixed \
           ${{ env.DOCKER_USERNAME }}/java-service:${{ github.run_id }}
 
     - name: Upload Java SARIF
@@ -172,9 +165,7 @@ jobs:
           --exit-code 1 \
           --format sarif \
           --output trivy-python.sarif \
-          --timeout 10m \
           --scanners vuln \
-          --ignore-unfixed \
           ${{ env.DOCKER_USERNAME }}/python-service:${{ github.run_id }}
 
     - name: Upload Python SARIF
@@ -190,9 +181,7 @@ jobs:
           --exit-code 1 \
           --format sarif \
           --output trivy-go.sarif \
-          --timeout 10m \
           --scanners vuln \
-          --ignore-unfixed \
           ${{ env.DOCKER_USERNAME }}/go-service:${{ github.run_id }}
 
     - name: Upload Go SARIF
