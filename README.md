@@ -29,8 +29,8 @@ This project demonstrates a multi-language application setup with a complete Dev
 
 ## How to Use
 1. Clone the repository:
-   ```bash
-  git clone https://github.com/lookatravi/multi-lang-devops-project.git
+
+git clone https://github.com/lookatravi/multi-lang-devops-project.git
   cd multi-lang-devops-project  
 
 ## Build and run the application locally:
@@ -65,12 +65,6 @@ kubectl apply -f k8s-manifest-all/
 chmod +x port-forward.sh
 ./port-forward.sh  # Access on localhost:8080, 5001, 5002
 
-📜 Proof of Implementation
-Component	Screenshot/Command Evidence
-Kubernetes	kubectl get pods (screenshot)
-ArgoCD	ArgoCD UI
-CI/CD Pipeline	GitHub Actions
-
 📝 Troubleshooting
 Issue: Health checks failing
 Fix:
@@ -81,13 +75,10 @@ Issue: Port forwarding not working
 ps aux | grep port-forward  # Kill stale processes
 
 # Contributing
-Contributions are welcome! Please submit a pull request or open an issue for any suggestions or improvements.
+Contributions are welcome!
+
 Fork the repository
-
 Create a new branch (git checkout -b feature)
-
 Commit changes (git commit -am 'Add feature')
-
 Push to branch (git push origin feature)
-
 Open a Pull Request
